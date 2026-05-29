@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R10 Hostal — Billing Automation Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Mulish:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg: #f5f5f5;
+  --dark: #1a1a2e;
+  --navy: #0f3460;
+  --red: #e94560;
+  --blue-light: #90caf9;
+  --blue-mid: #64b5f6;
+  --white: #ffffff;
+  --muted: #888888;
+  --border: #e0e0e0;
+  --soft: #f8f9fa;
+  --green: #2e7d32;
+  --yellow: #e65100;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--dark);
+  font-family: 'Mulish', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+.header {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  padding: 32px 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(233, 69, 96, 0.15);
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: -20px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(100, 181, 246, 0.08);
+}
+
+.header-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--blue-mid);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.header-title span { color: var(--red); }
+
+.header-sub {
+  font-size: 12px;
+  color: var(--blue-light);
+  opacity: 0.8;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.header-badge {
+  display: inline-block;
+  background: rgba(233, 69, 96, 0.2);
+  border: 1px solid rgba(233, 69, 96, 0.4);
+  color: #f48fb1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.tab-nav {
+  display: flex;
+  background: var(--dark);
+  padding: 0 16px 16px;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5);
+  background: transparent;
+  font-family: 'Mulish', sans-serif;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: white;
+}
+
+.view { display: none; padding: 20px 16px; }
+.view.active { display: block; animation: fadeUp 0.25s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--dark);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.card-sub {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.highlight-box .hb-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--blue-mid);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.highlight-box .hb-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.flow-section {
+  margin-bottom: 14px;
+}
+
+.flow-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.flow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.flow-box {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.flow-box.red { background: linear-gradient(135deg, #c62828, #e94560); }
+.flow-box.green { background: linear-gradient(135deg, #1b5e20, #2e7d32); }
+.flow-box.manual { background: #ffebee; color: #c62828; border: 1.5px solid #ef9a9a; }
+
+.flow-arrow { font-size: 14px; color: var(--muted); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+.caveat-box {
+  background: #fff8e1;
+  border-left: 3px solid #ff9800;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #5d4037;
+  line-height: 1.55;
+  margin-top: 12px;
+}
+.caveat-box strong { color: var(--dark); }
+
+.info-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--navy);
+}
+
+.info-card.green { border-left-color: var(--green); }
+.info-card.red { border-left-color: var(--red); }
+.info-card.blue { border-left-color: var(--blue-mid); }
+
+.info-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+.info-body {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.fee-table th {
+  background: var(--navy);
+  color: white;
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.fee-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--dark);
+  font-weight: 600;
+  vertical-align: top;
+  font-size: 12px;
+}
+
+.fee-table tr:nth-child(even) td { background: var(--soft); }
+.fee-table .win { color: var(--green); }
+.fee-table .lose { color: var(--red); }
+
+.source-tag {
+  display: inline-block;
+  background: #e8f0fe;
+  color: #1a56db;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+
+.source-tag.muted {
+  background: var(--soft);
+  color: var(--muted);
+}
+
+.next-step-card {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  border-radius: 12px;
+  padding: 24px 20px;
+  color: white;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.next-step-card .ns-eyebrow {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--blue-mid);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.next-step-card .ns-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.next-step-card .ns-body {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.next-step-card .ns-action {
+  display: inline-block;
+  background: var(--red);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 30px;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px 16px 0;
+}
+
+.footer-prepared {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.footer-brand {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 1px;
+}
+
+.pipeline-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.pipeline-step {
+  flex: 1;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dark);
+  position: relative;
+}
+
+.pipeline-step.active {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  color: white;
+  border-color: var(--navy);
+}
+
+.pipeline-step .step-num {
+  font-size: 9px;
+  opacity: 0.6;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.pipeline-arrow {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">R10 Hostal · La Candelaria · Bogotá</div>
+  <div class="header-title">Billing<br><span>Automation</span></div>
+  <div class="header-sub">A clear picture of the problem, the fix, and what it means for R10 day to day.</div>
+  <div class="header-badge">Prepared May 2026</div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab active" onclick="switchTab('problem')">🔍 The Problem</button>
+  <button class="tab" onclick="switchTab('fix')">✅ The Fix</button>
+  <button class="tab" onclick="switchTab('comparison')">💰 Bold vs MP</button>
+  <button class="tab" onclick="switchTab('nextstep')">→ Next Step</button>
+</div>
+
+<!-- TAB 1: THE PROBLEM -->
+<div class="view active" id="view-problem">
+
+  <div class="section-label">What's happening right now</div>
+
+  <div class="highlight-box">
+    <div class="hb-label">The core friction</div>
+    <div class="hb-text">Every time a guest checks out, someone on the team has to manually copy their information from Zak into Alegra to generate the invoice. Every single checkout. Every single day.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Current Flow</div>
+    <div class="card-sub">Manual · Slow · Error-prone</div>
+    <div class="flow-section">
+      <div class="flow-row">
+        <div class="flow-box">Guest pays</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Zak records stay</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box manual">Staff copies manually</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Alegra invoices</div>
+      </div>
+    </div>
+    <div class="caveat-box">
+      <strong>The invisible cost:</strong> If R10 has 20 checkouts per week and each manual entry takes 5 minutes, that's 100 minutes of staff time every week — just moving data between two systems that could be talking to each other automatically.
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:4px;">The tools R10 already has</div>
+
+  <div class="info-card blue">
+    <div class="info-title">Zak by WuBook — Property Management</div>
+    <div class="info-body">Handles all reservations, room management, and guest data. R10's operational backbone. Has native Mercado Pago integration built in.</div>
+    <span class="source-tag">en.wubook.net</span>
+  </div>
+
+  <div class="info-card blue">
+    <div class="info-title">Alegra — Colombian Invoicing</div>
+    <div class="info-body">DIAN-compliant invoicing. Required by Colombian tax law — this stays exactly as is. Also has native Mercado Pago integration.</div>
+    <span class="source-tag">alegra.com</span>
+  </div>
+
+  <div class="info-card red">
+    <div class="info-title">Bold — Current Card Terminal</div>
+    <div class="info-body">Great for taking card payments in person. But has no integration with Zak or Alegra — which means every Bold transaction still requires manual data entry into Alegra.</div>
+    <span class="source-tag muted">Observed at front desk · April 2026</span>
+  </div>
+
+  <div class="footer">
+    <div class="footer-prepared">Prepared by</div>
+    <div class="footer-brand">Nonstephable & Co</div>
+  </div>
+
+</div>
+
+<!-- TAB 2: THE FIX -->
+<div class="view" id="view-fix">
+
+  <div class="section-label">How the automation works</div>
+
+  <div class="card">
+    <div class="card-title">The New Flow</div>
+    <div class="card-sub">Automatic · Fast · Zero manual steps for card payments</div>
+    <div class="flow-section">
+      <div class="flow-row">
+        <div class="flow-box green">Guest pays via MP</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">Zak triggers</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">MP bridges</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">Alegra invoices</div>
+      </div>
+    </div>
+    <div class="caveat-box">
+      <strong>Honest note on cash:</strong> Cash payments will always need a manual entry in Alegra — that is true with any system in the world. But for card payments, which are likely the majority of R10's guests, this eliminates the work completely.
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:4px;">Why Mercado Pago is the bridge</div>
+
+  <div class="info-card green">
+    <div class="info-title">✅ Connects to Zak natively</div>
+    <div class="info-body">Mercado Pago has a built-in integration with Zak by WuBook. When a guest checks out and pays via Mercado Pago, Zak automatically sends the checkout data through.</div>
+    <span class="source-tag">en.wubook.net · Verified May 2026</span>
+  </div>
+
+  <div class="info-card green">
+    <div class="info-title">✅ Connects to Alegra natively</div>
+    <div class="info-body">Mercado Pago also integrates directly with Alegra. So when the data comes in from Zak, Alegra receives it and generates the DIAN-compliant invoice automatically.</div>
+    <span class="source-tag">alegra.com · Verified May 2026</span>
+  </div>
+
+  <div class="info-card blue">
+    <div class="info-title">Mercado Pago also has a physical card reader</div>
+    <div class="info-body">The Mercado Pago Point device works just like a datáfono — same experience for guests paying by card in person. The difference is what happens after the payment goes through.</div>
+    <span class="source-tag">mercadopago.com.co · Verified May 2026</span>
+  </div>
+
+  <div class="section-label" style="margin-top:4px;">The billing pipeline</div>
+
+  <div class="card">
+    <div class="card-sub" style="margin-bottom:12px;">Three stages. Fully automated for card payments.</div>
+    <div class="pipeline-row">
+      <div class="pipeline-step active">
+        <span class="step-num">Stage 1</span>
+        Checked Out
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step active">
+        <span class="step-num">Stage 2</span>
+        Invoice Sent
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step active">
+        <span class="step-num">Stage 3</span>
+        Paid / Closed
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-prepared">Prepared by</div>
+    <div class="footer-brand">Nonstephable & Co</div>
+  </div>
+
+</div>
+
+<!-- TAB 3: COMPARISON -->
+<div class="view" id="view-comparison">
+
+  <div class="section-label">Fee & integration comparison</div>
+
+  <div class="card">
+    <div class="card-title" style="font-size:16px; margin-bottom:4px;">Bold vs Mercado Pago</div>
+    <div class="card-sub">All fees in COP · Verified May 2026</div>
+    <table class="fee-table">
+      <tr>
+        <th>Method</th>
+        <th>Bold</th>
+        <th>Mercado Pago</th>
+      </tr>
+      <tr>
+        <td>Card reader (instant)</td>
+        <td>2.89% + $300</td>
+        <td>3.29% + $800</td>
+      </tr>
+      <tr>
+        <td>Card reader (14 days)</td>
+        <td>—</td>
+        <td class="win">2.79% + $800</td>
+      </tr>
+      <tr>
+        <td>Payment link</td>
+        <td>3.29% + $900</td>
+        <td>3.29% + $800</td>
+      </tr>
+      <tr>
+        <td>QR code</td>
+        <td>1.5%</td>
+        <td class="win">~0%</td>
+      </tr>
+      <tr>
+        <td>International cards</td>
+        <td>+1% extra</td>
+        <td class="win">Included in base</td>
+      </tr>
+      <tr>
+        <td>Monthly fee</td>
+        <td class="win">None</td>
+        <td class="win">None</td>
+      </tr>
+      <tr>
+        <td>Zak integration</td>
+        <td class="lose">✗ None</td>
+        <td class="win">✓ Native</td>
+      </tr>
+      <tr>
+        <td>Alegra integration</td>
+        <td class="lose">✗ None</td>
+        <td class="win">✓ Native</td>
+      </tr>
+      <tr>
+        <td>Auto invoice on checkout</td>
+        <td class="lose">✗ Manual always</td>
+        <td class="win">✓ Automatic</td>
+      </tr>
+      <tr>
+        <td>Physical card reader</td>
+        <td class="win">✓ Yes (current)</td>
+        <td class="win">✓ Point device</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">What the fee difference actually means</div>
+    <div class="info-body">
+      Bold's datáfono is about $800 COP cheaper per $200,000 COP transaction. That's the fee difference. But the real question is what it costs R10 in staff time to manually enter billing data for every card checkout, every week. That cost is ongoing and growing. The fee difference is fixed and small.
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:4px;">Sources</div>
+
+  <div class="info-card">
+    <div class="info-title">bold.co/tarifas</div>
+    <div class="info-body">Official Bold pricing page. Datáfono: 2.89% + $300. Payment link: 3.29% + $900. QR: 1.5%. International cards: +1%.</div>
+    <span class="source-tag">Verified May 2026</span>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">mercadopago.com.co/herramientas-para-vender/check-out</div>
+    <div class="info-body">Official Mercado Pago Colombia checkout page. Instant: 3.29% + $800. 7 days: 2.99% + $800. 14 days: 2.79% + $800.</div>
+    <span class="source-tag">Verified May 2026</span>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">btodigital.com — Pasarelas Colombia 2026</div>
+    <div class="info-body">Independent third-party comparison of Colombian payment gateways. Confirms Mercado Pago rates and positioning for SMEs.</div>
+    <span class="source-tag">April 2026</span>
+  </div>
+
+  <div class="footer">
+    <div class="footer-prepared">Prepared by</div>
+    <div class="footer-brand">Nonstephable & Co</div>
+  </div>
+
+</div>
+
+<!-- TAB 4: NEXT STEP -->
+<div class="view" id="view-nextstep">
+
+  <div class="section-label">Where we go from here</div>
+
+  <div class="next-step-card">
+    <div class="ns-eyebrow">One clear action</div>
+    <div class="ns-title">A Setup Plan Built for R10</div>
+    <div class="ns-body">No commitments, no switching anything yet. Just a clear, specific picture of what connecting Mercado Pago to Zak and Alegra would look like for R10 — including which tools bridge the connection and what the setup process involves.</div>
+    <div class="ns-action">Say yes to seeing the plan</div>
+  </div>
+
+  <div class="info-card green">
+    <div class="info-title">✅ What stays exactly the same</div>
+    <div class="info-body">Alegra stays. Zak stays. DIAN compliance stays. The accounting process stays. The only thing that changes is the manual step between checkout and invoice — that's what gets automated.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">What the setup plan will include</div>
+    <div class="info-body">
+      The exact connection between Mercado Pago, Zak, and Alegra — including the automation bridge tool. What the team needs to know. A realistic timeline. And a clear view of what R10 saves in staff time every week once it's running.
+    </div>
+  </div>
+
+  <div class="info-card blue">
+    <div class="info-title">Questions this plan will answer</div>
+    <div class="info-body">
+      What happens to cash payments? What does the card reader switch actually involve? What does the contador need to know? How long does setup take? All of it, specific to R10.
+    </div>
+  </div>
+
+  <div class="footer" style="margin-top: 24px;">
+    <div class="footer-prepared">Prepared by</div>
+    <div class="footer-brand">Nonstephable & Co</div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('view-' + name).classList.add('active');
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
